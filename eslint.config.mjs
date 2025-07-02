@@ -1,9 +1,27 @@
-import js from "@eslint/js";
 import globals from "globals";
-import { defineConfig } from "eslint/config";
+import pluginJs from "@eslint/js";
+import jest from "eslint-plugin-jest";
 
-
-export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs}"], languageOptions: { globals: globals.browser } },
-]);
+export default [
+  {
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+  },
+  pluginJs.configs.recommended,
+  {
+    rules: {
+      "no-unused-vars": "warn",
+    },
+  },
+  {
+    ignores: ["dist/*", "coverage/*"],
+  },
+  {
+    files: ["**/*.test.js"],
+    ...jest.configs["flat/recommended"],
+    rules: {
+      ...jest.configs["flat/recommended"].rules,
+      "jest/prefer-expect-assertions": "off",
+      "jest/expect-expect": "error",
+    },
+  },
+];
